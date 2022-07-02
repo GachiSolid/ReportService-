@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using ReportingService.Models;
 
-namespace ReportingService.Models
+namespace ReportingService.EF
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext : IdentityDbContext<User>
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Provider> Providers { get; set; }

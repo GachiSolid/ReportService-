@@ -1,17 +1,22 @@
+using FluentValidation;
+using IntershipProject.BLL.Handlers.Account;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using ReportingService.BLL.Server;
-using ReportingService.DAL.DTOs;
-using ReportingService.DAL.Repositiories;
+using ReportingService.BLL.Commands.Validation.Account;
+using ReportingService.EF;
+using ReportingService.Middleware;
 using ReportingService.Models;
-using ReportingService.Server;
+using ReportingService.Token;
+using RepotringService.BLL.Commands.Account;
 using System;
 using System.Text;
 
@@ -31,8 +36,20 @@ namespace ReportingService
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseLazyLoadingProxies().UseNpgsql(connection));
 
-            services.AddTransient<IWorkerWithUser, Registration>();
-            services.AddTransient<IRepository<UserDTO>, UserRepository>();
+            services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<ApplicationContext>();
+
+            services.AddMediatR(typeof(LoginHandler).Assembly);
+
+            services.AddScoped<IValidator<LoginCommand>, LoginModelValidation>();
+            services.AddScoped<IValidator<RegistrationCommand>, RegistrationModelValidation>();
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
@@ -82,6 +99,7 @@ namespace ReportingService
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ReportingService v1"));
 
@@ -90,6 +108,8 @@ namespace ReportingService
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<TokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
