@@ -3,8 +3,8 @@ using MediatR;
 using RepotringService.BLL.Commands.Account;
 using RepotringService.BLL.Responses.Account;
 using Microsoft.AspNetCore.Identity;
-using ReportingService.Models;
 using Microsoft.EntityFrameworkCore;
+using ReportingService.DAL.Models;
 
 namespace ReportingService.BLL.Handlers.Account
 {

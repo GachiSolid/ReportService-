@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ReportingService.Models
+namespace ReportingService.DAL.Models
 {
     public class User: IdentityUser
     {

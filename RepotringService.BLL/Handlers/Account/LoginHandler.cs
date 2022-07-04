@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReportingService.BLL;
 using ReportingService.BLL.Errors;
-using ReportingService.Models;
+using ReportingService.DAL.Models;
 using RepotringService.BLL.Commands.Account;
 using RepotringService.BLL.Responses.Account;
 
@@ -22,7 +22,7 @@ namespace IntershipProject.BLL.Handlers.Account
 
         public async Task<Result<UserModel, Error>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await userManager.Users.FirstOrDefaultAsync(x => x.UserName == request.UserName, cancellationToken);
+            var user = await userManager.Users.Include(x => x.Reports).FirstOrDefaultAsync(x => x.UserName.Equals(request.UserName), cancellationToken);
             if (user == null)
                 return Result<UserModel, Error>.Failed(new NotFoundError("This account doesn't exist"));
 
@@ -30,11 +30,18 @@ namespace IntershipProject.BLL.Handlers.Account
             if (!result.Succeeded)
                 return Result<UserModel, Error>.Failed(new BadRequestError("Wrong password"));
 
+            var reports = new List<int>();
+            foreach (var report in user.Reports)
+            {
+                reports.Add(report.Id);
+            }
+
             var userModel = new UserModel()
             {
                 Id = user.Id,
                 Email = user.Email,
-                UserName = user.UserName
+                UserName = user.UserName,
+                ReportsId = reports
             };
 
             return Result<UserModel, Error>.Succeeded(userModel);

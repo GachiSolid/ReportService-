@@ -6,5 +6,7 @@
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
+
+        public IList<int> ReportsId { get; set; }
     }
 }

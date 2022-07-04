@@ -52,11 +52,5 @@ namespace ReportingService.Controllers
             if (result.Successed) result.Value.Token = jwtGenerator.BuildToken(result.Value.UserName);
             return result.ToWebResult();
         }
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> Check()
-        {
-            return new OkResult();
-        }
     }
 }

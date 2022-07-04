@@ -12,13 +12,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ReportingService.BLL.Commands.Validation.Account;
-using ReportingService.EF;
+using ReportingService.DAL.EF;
 using ReportingService.Middleware;
-using ReportingService.Models;
+using ReportingService.DAL.Models;
 using ReportingService.Token;
 using RepotringService.BLL.Commands.Account;
 using System;
 using System.Text;
+using RepotringService.BLL.Commands.Report;
+using ReportingService.BLL.Commands.Validation.Report;
 
 namespace ReportingService
 {
@@ -34,7 +36,10 @@ namespace ReportingService
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options =>
-                options.UseLazyLoadingProxies().UseNpgsql(connection));
+            {
+                options.UseNpgsql(connection);
+                options.EnableSensitiveDataLogging();
+            });
 
             services.AddIdentity<User, IdentityRole>(options =>
             {
@@ -49,6 +54,7 @@ namespace ReportingService
 
             services.AddScoped<IValidator<LoginCommand>, LoginModelValidation>();
             services.AddScoped<IValidator<RegistrationCommand>, RegistrationModelValidation>();
+            services.AddScoped<IValidator<AddFileCommand>, FileValidatior>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));

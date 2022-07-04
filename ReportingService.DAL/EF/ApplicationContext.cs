@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ReportingService.Models;
+using ReportingService.DAL.Models;
 
-namespace ReportingService.EF
+namespace ReportingService.DAL.EF
 {
     public class ApplicationContext : IdentityDbContext<User>
     {

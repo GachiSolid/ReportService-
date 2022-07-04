@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ReportingService.Models
+namespace ReportingService.DAL.Models
 {
     public class Service
     {
