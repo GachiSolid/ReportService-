@@ -20,7 +20,7 @@ using RepotringService.BLL.Commands.Account;
 using System;
 using System.Text;
 using RepotringService.BLL.Commands.Report;
-using ReportingService.BLL.Commands.Validation.Report;
+using ReportingService.BLL.Commands.Validation.ReportValidation;
 
 namespace ReportingService
 {

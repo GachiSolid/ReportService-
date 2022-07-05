@@ -7,7 +7,7 @@ using ReportingService.DAL.Models;
 using ReportingService.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 
-namespace RepotringService.BLL.Handlers.ReportCommand
+namespace RepotringService.BLL.Handlers.ReportHandlers
 {
     public class AddReportHandler : IRequestHandler<AddFileCommand, Result<ReportModel, Error>>
     {
@@ -51,10 +51,17 @@ namespace RepotringService.BLL.Handlers.ReportCommand
 
             await db.SaveChangesAsync(cancellationToken);
 
-            var servicesId = new List<int>();
-            foreach (var services in await db.Services.Where(x => x.ReportId == report.Id).ToListAsync(cancellationToken: cancellationToken))
+            var services = new List<ServiceModel>();
+            foreach (var service in await db.Services.Include(x => x.Provider).Where(x => x.ReportId == report.Id).ToListAsync(cancellationToken: cancellationToken))
             {
-                servicesId.Add(services.Id);
+                var serviceModel = new ServiceModel()
+                {
+                    Id = service.Id,
+                    Type = service.Type,
+                    ProviderName = service.Provider.Name,
+                    ProviderAddress = service.Provider.Address,
+                    Sum = service.Sum
+                };
             }
 
             var reportModel = new ReportModel()
@@ -62,7 +69,7 @@ namespace RepotringService.BLL.Handlers.ReportCommand
                 Id = report.Id,
                 Date = report.Date,
                 Name = report.Name,
-                ServicesId = servicesId
+                Services = services
             };
 
             return Result<ReportModel, Error>.Succeeded(reportModel);

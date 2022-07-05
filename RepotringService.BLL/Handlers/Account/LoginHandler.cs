@@ -30,10 +30,16 @@ namespace IntershipProject.BLL.Handlers.Account
             if (!result.Succeeded)
                 return Result<UserModel, Error>.Failed(new BadRequestError("Wrong password"));
 
-            var reports = new List<int>();
+            var reports = new List<ReportModel>();
             foreach (var report in user.Reports)
             {
-                reports.Add(report.Id);
+                var reportModel = new ReportModel()
+                {
+                    Id = report.Id,
+                    Name = report.Name
+                };
+
+                reports.Add(reportModel);
             }
 
             var userModel = new UserModel()
@@ -41,7 +47,7 @@ namespace IntershipProject.BLL.Handlers.Account
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
-                ReportsId = reports
+                Reports = reports
             };
 
             return Result<UserModel, Error>.Succeeded(userModel);

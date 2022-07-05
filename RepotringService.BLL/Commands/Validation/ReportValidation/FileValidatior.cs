@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using RepotringService.BLL.Commands.Report;
 
-namespace ReportingService.BLL.Commands.Validation.Report
+namespace ReportingService.BLL.Commands.Validation.ReportValidation
 {
     public class FileValidatior: AbstractValidator<AddFileCommand>
     {
