@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Fonts\FreeSans.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ReportingService.DAL\ReportingService.DAL.csproj" />
   </ItemGroup>
 
